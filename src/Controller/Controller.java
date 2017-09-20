@@ -21,8 +21,6 @@ public class Controller {
 	 * @return
 	 */
 	public ArrayList<Dot> getAllDots() {
-		PainterRobot pr = new PainterRobot();
-		this.dots = pr.getAllDots();
 		return this.dots;
 	}
 	

@@ -4,6 +4,7 @@ package Model;
 
 import java.util.ArrayList;
 
+import Controller.Controller;
 import View.DrawPage;
 
 /**
@@ -32,7 +33,8 @@ public class PainterRobot {
 	    }
 	
 	public ArrayList<Dot> getAllDots() {
-
+		Controller cont = new Controller();
+		this.dots = cont.getAllDots();
 		return this.dots;
 	}
 
