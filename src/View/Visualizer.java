@@ -68,7 +68,9 @@ public class Visualizer extends JPanel{
 							selectedRects.remove(rectangle);
 						}
 						else {
-							selectedRects.add(rectangle);							 
+							selectedRects.add(rectangle);	
+							//Taking the coordinates of the rectangle and
+							//using them as reference to create Dot objects
 							 int RectX = (int) rectangle.getCenterX()/50;
 							 int RectY = (int) rectangle.getCenterY()/50;
 							 
