@@ -66,5 +66,10 @@ public class Dot {
 	public List<Connection> getConnections() {
 		return connections;
 	}
+	
+	public String toString(){
+		String s = "X:" + this.x + ", y:" + this.y + ", isSelected:" + this.isSelected;
+		return s;
+	}
 
 }

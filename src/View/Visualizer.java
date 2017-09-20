@@ -38,7 +38,8 @@ public class Visualizer extends JPanel{
 	private ArrayList<Rectangle2D> rectangles = new ArrayList<Rectangle2D>();
 	private String show;
 	private List<Dot> dots;
-	private List<Rectangle2D> selectedDots;
+	public ArrayList<Dot> chosenDots;
+	private List<Rectangle2D> selectedRects;
 	
 	private static final int RECTWIDTH = 100;
 	private static final int RECTHEIGHT = 100;
@@ -54,7 +55,7 @@ public class Visualizer extends JPanel{
 		this.show ="no";
 		this.dots = dots;
 		pattern = new HashMap<Rectangle2D, Dot>();
-		selectedDots = new ArrayList<Rectangle2D>();
+		selectedRects = new ArrayList<Rectangle2D>();
 		
 		addMouseListener(new MouseAdapter(){
 			@Override
@@ -63,11 +64,36 @@ public class Visualizer extends JPanel{
 				int y = e.getY();
 				for (Rectangle2D rectangle : rectangles){
 					if (rectangle.contains(x, y)) {
-						if (selectedDots.contains(rectangle)) {
-							selectedDots.remove(rectangle);
+						if (selectedRects.contains(rectangle)) {
+							selectedRects.remove(rectangle);
 						}
 						else {
-							selectedDots.add(rectangle);
+							selectedRects.add(rectangle);							 
+							 int RectX = (int) rectangle.getCenterX()/50;
+							 int RectY = (int) rectangle.getCenterY()/50;
+							 
+							 if(RectX == 5 ){
+								 RectX = 2;
+							 }
+							 if(RectX == 9){
+								 RectX = 3;
+							 }
+							 
+							 if(RectY == 1){
+								 RectY = 3;
+							 }else if(RectY == 5){
+								 RectY = 2;
+							 }else{
+								 RectY = 1;
+							 }
+							 Dot temp = new Dot(RectX, RectY);
+							 chosenDots = new ArrayList<Dot>();
+							 
+							 temp.setIsSelected(true);
+							 chosenDots.add(temp);
+							System.out.println(chosenDots.toString());
+
+							 
 						}
 						break;
 					}
@@ -81,7 +107,7 @@ public class Visualizer extends JPanel{
 	public void setMatrix(ArrayList<Dot> dots){
 		this.dots = dots;
 		pattern = new HashMap<Rectangle2D, Dot>();
-		selectedDots.clear();
+		selectedRects.clear();
 		this.show = "yes";
 		repaint();
 //		if(show.equals("yes")){
@@ -112,12 +138,14 @@ public class Visualizer extends JPanel{
 			}
 		}
 		for(Rectangle2D rectangle : rectangles) {
-			if (selectedDots.contains(rectangle)) {
+			if (selectedRects.contains(rectangle)) {
 				g2d.setColor(Color.RED);
 				g2d.draw(rectangle);
+				dots.add(new Dot((int) rectangle.getX(), (int) rectangle.getY()));
 				
 				g2d.setColor(Color.WHITE);
 				g2d.fill(rectangle);
+				g2d.setStroke(thickStroke);
 			}
 		}
 			
@@ -131,7 +159,7 @@ public class Visualizer extends JPanel{
 			rectangles.add(rectangle);
 			pattern.put(rectangle, dot);
 			
-			if (getSelectedTiles().contains(pattern.get(rectangle))) {
+			if (getSelectedDots().contains(pattern.get(rectangle))) {
 				g2d.setColor(Color.RED);
 				g2d.draw(rectangle);
 				g2d.setColor(Color.DARK_GRAY);
@@ -168,15 +196,25 @@ public class Visualizer extends JPanel{
 		}
 
 
-	public List<Dot> getSelectedTiles() {
+	public List<Dot> getSelectedDots() {
 		List<Dot> selectedDots = new ArrayList<Dot>();
-		for (Rectangle2D rectangle : this.selectedDots) {
-			selectedDots.add(pattern.get(rectangle));
+		for(Rectangle2D rectangle : rectangles) {
+			if (selectedRects.contains(rectangle)) {
+				int x = (int) rectangle.getX();
+				int y = (int) rectangle.getY();
+				selectedDots.add(new Dot(x,y));
+			}
 		}
 		
-		return null;
+		return this.dots;
 	}
 	
+	public int[] getSelectedRectanglePos(int index) {
+		int[] out = new int[2];
+		out[0] = (int)selectedRects.get(index).getMaxX()/(RECTWIDTH + SPACING);
+		out[1] = (int)selectedRects.get(index).getMaxY()/(RECTHEIGHT + SPACING);
+		return out;
+	}
 	
 	@Override
 	public void paintComponent(Graphics g){

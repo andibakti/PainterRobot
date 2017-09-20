@@ -46,7 +46,7 @@ public class DrawPage extends JFrame{
 	private JLabel errorMessage;
 	//interface
 	private String error = null;
-	private JButton helpButton;
+	private JButton sendButton;
 	
 	//Visualization
 	private Visualizer visualizer;
@@ -67,18 +67,7 @@ public class DrawPage extends JFrame{
 		refreshData();
 	}
 	
-	 public static void main(String[] args) {
-	        //Schedule a job for the event-dispatching thread:
-	        //creating and showing this application's GUI.
-	        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-	            public void run() {
-	            	DrawPage dp = new DrawPage("Si senor");
-	            	
-	            	dp.setVisible(true);
-	                dp.initComponents("vamonos");
-	            }
-	        });
-	    }
+	
 	
 	public void initComponents(String initialGame) {
 		
@@ -87,13 +76,13 @@ public class DrawPage extends JFrame{
 		errorMessage.setForeground(Color.RED);
 		
 		
-		helpButton = new JButton();
-		helpButton.setIcon(UIManager.getIcon("OptionPane.questionIcon"));
+		sendButton = new JButton();
+		sendButton.setText("SEND");
 		//helpButton.setText("HELP");
-		helpButton.setToolTipText("Click here for Help.");
-		helpButton.addActionListener(new java.awt.event.ActionListener() {
+		sendButton.setToolTipText("Click here for Help.");
+		sendButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				helpButtonActionPerformed(evt);
+				sendButtonActionPerformed(evt);
 			}
 		});
 		
@@ -125,11 +114,11 @@ public class DrawPage extends JFrame{
 				.addGroup(layout.createParallelGroup()
 						.addComponent(verticalLine))
 				.addGroup(layout.createParallelGroup()
-						.addComponent(helpButton)));
+						.addComponent(sendButton)));
 										
 
 		layout.linkSize(SwingConstants.HORIZONTAL, new java.awt.Component[] 
-				{helpButton});
+				{sendButton});
 						
 				
 		layout.setVerticalGroup(
@@ -140,9 +129,8 @@ public class DrawPage extends JFrame{
 							.addComponent(verticalLine))
 				.addGroup(layout.createSequentialGroup()
 						.addComponent(errorMessage)
-						.addComponent(helpButton)));
+						.addComponent(sendButton)));
 		myLayout=layout;
-		
 		
 		pack();
 	}
@@ -150,9 +138,12 @@ public class DrawPage extends JFrame{
 	/**
 	 * @param evt
 	 */
-	protected void helpButtonActionPerformed(ActionEvent evt) {
-		// TODO Auto-generated method stub
-		
+	protected void sendButtonActionPerformed(ActionEvent evt) {
+		// TODO Auto-generated method stub 
+		ArrayList<Dot> dots = visualizer.chosenDots;
+		Controller cont = new Controller();
+		cont.sendDots(dots);
+		 
 	}
 
 	public void refreshData() {
@@ -162,11 +153,13 @@ public class DrawPage extends JFrame{
 			 errorMessage.setVisible(true);
 		 }else{
 			 errorMessage.setVisible(false);
-		 }		Controller cont = new Controller();
+		 }		
+		Controller cont = new Controller();
 		System.out.println("refreshData" + show);
 		
+		//if(visualizer.getSelectedDots() != null){ System.out.println(visualizer.getSelectedDots().get(0).getX());}
 		
-		  visualizer.setMatrix(new ArrayList<Dot>());
+		  visualizer.setMatrix(cont.getAllDots());
 		  
 		
 		pack();

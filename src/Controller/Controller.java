@@ -25,6 +25,18 @@ public class Controller {
 		this.dots = pr.getAllDots();
 		return this.dots;
 	}
+	
+	//Send the coordinates of the dots to the back-end to translate
+	//data into rotations and movements that the robot has to perform.
+	public boolean sendDots(ArrayList<Dot> dots){
+		boolean wasSet = false;
+		this.dots = dots;
+		
+		//Send to back-end
+		
+		wasSet = true;
+		return wasSet;
+	}
 
 
 	/**
@@ -34,6 +46,33 @@ public class Controller {
 	public ArrayList<Connection> getConnections(Dot dot) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+	/**
+	 * @param aX
+	 * @param aY
+	 */
+	public boolean createDot(int aX, int aY){
+		boolean wasSet = false;
+		PainterRobot pr = new PainterRobot();
+		try{
+			for(Dot dot: pr.getAllDots()){
+				if(dot.getX() ==aX && dot.getY() == aY){
+					throw new RuntimeException("Already a dot on that spot");
+				}
+			}
+			Dot dot = new Dot(aX, aY);
+			pr.addDot(dot);
+			this.dots.add(dot);
+			
+		}catch(RuntimeException e){
+			
+		}
+		
+		return wasSet = true;
+		// TODO Auto-generated method stub
+		
 	}
 
 }
