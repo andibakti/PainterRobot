@@ -56,11 +56,11 @@ public class DrawPage extends JFrame{
 	private boolean inMiniDesign=false;
 	private GroupLayout myLayout;
 
-	private static final int WIDTH_TILEO_VISUALIZATION = 810;
-	private static final int HEIGHT_TILEO_VISUALIZATION = 810;
+	private static final int WIDTH_TILEO_VISUALIZATION = 600;
+	private static final int HEIGHT_TILEO_VISUALIZATION = 600;
 	
-	 private static final int WIDTH_DESIGN_VISUALIZATION = 810;
-	 private static final int HEIGHT_DESIGN_VISUALIZATION = 810;
+	 private static final int WIDTH_DESIGN_VISUALIZATION = 800;
+	 private static final int HEIGHT_DESIGN_VISUALIZATION = 800;
 	
 	public DrawPage(String initialGame) {
 		initComponents(initialGame);
@@ -73,6 +73,8 @@ public class DrawPage extends JFrame{
 	        javax.swing.SwingUtilities.invokeLater(new Runnable() {
 	            public void run() {
 	            	DrawPage dp = new DrawPage("Si senor");
+	            	
+	            	dp.setVisible(true);
 	                dp.initComponents("vamonos");
 	            }
 	        });
@@ -102,13 +104,10 @@ public class DrawPage extends JFrame{
 		
 		// global settings and listeners
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		setTitle("Tile-O");
+		setTitle("PainterRobot");
 		
 		
 		JSeparator verticalLine = new JSeparator();
-		JSeparator horizontalLineTop = new JSeparator();
-		JSeparator horizontalLineMiddle = new JSeparator();
-		JSeparator horizontalLineBottom = new JSeparator();
 		
 		//layout
 		
@@ -148,6 +147,14 @@ public class DrawPage extends JFrame{
 		pack();
 	}
 	
+	/**
+	 * @param evt
+	 */
+	protected void helpButtonActionPerformed(ActionEvent evt) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public void refreshData() {
 		// error
 		if(error != null){
@@ -159,26 +166,9 @@ public class DrawPage extends JFrame{
 		System.out.println("refreshData" + show);
 		
 		
-		 if (error == null || error.length() == 0) {
-			 Dot dot1 = new Dot(0,0);
-			 Dot dot2 = new Dot(0,1);
-			 Dot dot3 = new Dot(0,2);
-			 Dot dot4 = new Dot(1,0);
-			 
-		
-		 }
 		  visualizer.setMatrix(new ArrayList<Dot>());
 		  
 		
 		pack();
-	}
-	
-	private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {
-		error = null;
-		Controller cont = new Controller();
-		
-		error = "Draw a letter or drawing by clicking on the boxes.";
-	
-		refreshData();
 	}
 }

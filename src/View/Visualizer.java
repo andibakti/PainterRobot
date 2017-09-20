@@ -40,8 +40,8 @@ public class Visualizer extends JPanel{
 	private List<Dot> dots;
 	private List<Rectangle2D> selectedDots;
 	
-	private static final int RECTWIDTH = 30;
-	private static final int RECTHEIGHT = 30;
+	private static final int RECTWIDTH = 100;
+	private static final int RECTHEIGHT = 100;
 	private static final int SPACING = 100;
 
 	public Visualizer(ArrayList<Dot> dots){
