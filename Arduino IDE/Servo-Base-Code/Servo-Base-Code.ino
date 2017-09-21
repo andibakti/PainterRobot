@@ -1,5 +1,6 @@
 //Cheng Lin
 //19 Sept 17
+//Arduino code to run a servo
 
 #include <Servo.h> //import servo commands
 Servo servo; //declare servo
