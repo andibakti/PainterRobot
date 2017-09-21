@@ -51,7 +51,7 @@ public class DrawPage extends JFrame{
 	//Visualization
 	private Visualizer visualizer;
 	
-	private List<Dot> dots;
+	private ArrayList<Dot> dots;
 	private boolean show;
 	private boolean inMiniDesign=false;
 	private GroupLayout myLayout;
@@ -140,7 +140,7 @@ public class DrawPage extends JFrame{
 	 */
 	protected void sendButtonActionPerformed(ActionEvent evt) {
 		// TODO Auto-generated method stub 
-		ArrayList<Dot> dots = visualizer.chosenDots;
+		this.dots = visualizer.chosenDots;
 		Controller cont = new Controller();
 		cont.sendDots(dots);
 		 

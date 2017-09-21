@@ -18,7 +18,10 @@ import java.awt.BasicStroke;
 import Controller.Controller;
 
 import java.awt.geom.Rectangle2D;
-
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import Model.Dot;
 import Model.Connection;
@@ -37,9 +40,10 @@ public class Visualizer extends JPanel{
 	private HashMap<Rectangle2D, Dot> pattern;
 	private ArrayList<Rectangle2D> rectangles = new ArrayList<Rectangle2D>();
 	private String show;
-	private List<Dot> dots;
+	ArrayList<Dot> dots;
 	public ArrayList<Dot> chosenDots;
 	private List<Rectangle2D> selectedRects;
+	public Dot[] finalDots = new Dot[9];
 	
 	private static final int RECTWIDTH = 100;
 	private static final int RECTHEIGHT = 100;
@@ -56,6 +60,7 @@ public class Visualizer extends JPanel{
 		this.dots = dots;
 		pattern = new HashMap<Rectangle2D, Dot>();
 		selectedRects = new ArrayList<Rectangle2D>();
+		chosenDots = new ArrayList<Dot>();
 		
 		addMouseListener(new MouseAdapter(){
 			@Override
@@ -88,12 +93,13 @@ public class Visualizer extends JPanel{
 							 }else{
 								 RectY = 1;
 							 }
-							 Dot temp = new Dot(RectX, RectY);
-							 chosenDots = new ArrayList<Dot>();
 							 
+							 Dot temp = new Dot(RectX, RectY);							 
 							 temp.setIsSelected(true);
 							 chosenDots.add(temp);
-							System.out.println(chosenDots.toString());
+							 writeToFile(temp);		
+							 System.out.println(chosenDots.toString());
+							
 
 							 
 						}
@@ -122,6 +128,7 @@ public class Visualizer extends JPanel{
 	private void doDrawing(Graphics g){
 		Controller cont = new Controller();
 		Graphics2D g2d = (Graphics2D) g;
+		dots = new ArrayList<Dot>();
 		g.create();
 		BasicStroke thinStroke = new BasicStroke(2);
 		BasicStroke thickStroke = new BasicStroke(6);
@@ -143,7 +150,7 @@ public class Visualizer extends JPanel{
 			if (selectedRects.contains(rectangle)) {
 				g2d.setColor(Color.RED);
 				g2d.draw(rectangle);
-				dots.add(new Dot((int) rectangle.getX(), (int) rectangle.getY()));
+				//dots.add(new Dot((int) rectangle.getX(), (int) rectangle.getY()));
 				
 				g2d.setColor(Color.WHITE);
 				g2d.fill(rectangle);
@@ -198,13 +205,36 @@ public class Visualizer extends JPanel{
 		}
 
 
-	public List<Dot> getSelectedDots() {
+	public ArrayList<Dot> getSelectedDots() {
 		List<Dot> selectedDots = new ArrayList<Dot>();
 		for(Rectangle2D rectangle : rectangles) {
 			if (selectedRects.contains(rectangle)) {
-				int x = (int) rectangle.getX();
-				int y = (int) rectangle.getY();
-				selectedDots.add(new Dot(x,y));
+				//Taking the coordinates of the rectangle and
+				//using them as reference to create Dot objects
+				 int RectX = (int) rectangle.getCenterX()/50;
+				 int RectY = (int) rectangle.getCenterY()/50;
+				 
+				 if(RectX == 5 ){
+					 RectX = 2;
+				 }
+				 if(RectX == 9){
+					 RectX = 3;
+				 }
+				 
+				 if(RectY == 1){
+					 RectY = 3;
+				 }else if(RectY == 5){
+					 RectY = 2;
+				 }else{
+					 RectY = 1;
+				 }
+				 
+				 Dot temp = new Dot(RectX, RectY);							 
+				 temp.setIsSelected(true);
+				 chosenDots.add(temp);
+				 writeToFile(temp);	
+				 this.dots = chosenDots;
+				 System.out.println(chosenDots.toString());
 			}
 		}
 		
@@ -216,6 +246,17 @@ public class Visualizer extends JPanel{
 		out[0] = (int)selectedRects.get(index).getMaxX()/(RECTWIDTH + SPACING);
 		out[1] = (int)selectedRects.get(index).getMaxY()/(RECTHEIGHT + SPACING);
 		return out;
+	}
+	
+	public void writeToFile(Dot dot){
+		try{
+			PrintWriter writer = new PrintWriter(new FileWriter("Dots.txt", true));
+
+		    writer.println(dot.getX() + "," + dot.getY());
+		    writer.close();
+		} catch (IOException e) {
+		   // do something
+		}
 	}
 	
 	@Override
