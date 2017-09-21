@@ -28,6 +28,8 @@ public class PainterRobot {
 	            	
 	            	dp.setVisible(true);
 	                dp.initComponents("vamonos");
+	                
+	                
 	            }
 	        });
 	    }

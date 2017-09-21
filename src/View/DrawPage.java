@@ -24,6 +24,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
@@ -56,6 +57,10 @@ public class DrawPage extends JFrame{
 	private boolean inMiniDesign=false;
 	private GroupLayout myLayout;
 
+
+
+	private JFrame frame;
+
 	private static final int WIDTH_TILEO_VISUALIZATION = 600;
 	private static final int HEIGHT_TILEO_VISUALIZATION = 600;
 	
@@ -84,6 +89,19 @@ public class DrawPage extends JFrame{
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
 				sendButtonActionPerformed(evt);
 			}
+		});
+		
+		
+		frame = new JFrame();
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+		    		File file = new File("Dots.txt");
+		    		file.delete();
+		    		System.exit(0);
+		        
+		    }
 		});
 		
 		
@@ -143,6 +161,7 @@ public class DrawPage extends JFrame{
 		this.dots = visualizer.chosenDots;
 		Controller cont = new Controller();
 		cont.sendDots(dots);
+		
 		 
 	}
 

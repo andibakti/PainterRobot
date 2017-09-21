@@ -55,6 +55,10 @@ public class Controller {
 		return wasSet;
 	}
 
+	//Read the "Dots.txt" file, puts the information in an array
+	//and then once finished it deletes the file
+	//Input: none
+	//Output: ArrayList of double of the path
 	public ArrayList<double[]> readFromFile() throws Exception{
 		
 		ArrayList<double[]> dots = new ArrayList<double[]>();
@@ -72,6 +76,8 @@ public class Controller {
 		} catch(IOException e) {
 		   
 		}finally{
+			//Deleting the file 
+			
 			 br.close();
 			 File file = new File("Dots.txt");
 			 file.delete();

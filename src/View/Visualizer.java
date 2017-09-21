@@ -79,19 +79,22 @@ public class Visualizer extends JPanel{
 							 int RectX = (int) rectangle.getCenterX()/50;
 							 int RectY = (int) rectangle.getCenterY()/50;
 							 
+							 if(RectX == 1){
+								 RectX = 0;
+							 }
 							 if(RectX == 5 ){
-								 RectX = 2;
+								 RectX = 1;
 							 }
 							 if(RectX == 9){
-								 RectX = 3;
+								 RectX = 2;
 							 }
 							 
 							 if(RectY == 1){
-								 RectY = 3;
-							 }else if(RectY == 5){
 								 RectY = 2;
-							 }else{
+							 }else if(RectY == 5){
 								 RectY = 1;
+							 }else{
+								 RectY = 0;
 							 }
 							 
 							 Dot temp = new Dot(RectX, RectY);							 
@@ -213,20 +216,22 @@ public class Visualizer extends JPanel{
 				//using them as reference to create Dot objects
 				 int RectX = (int) rectangle.getCenterX()/50;
 				 int RectY = (int) rectangle.getCenterY()/50;
-				 
+				 if(RectX == 1){
+					 RectX = 0;
+				 }
 				 if(RectX == 5 ){
-					 RectX = 2;
+					 RectX = 1;
 				 }
 				 if(RectX == 9){
-					 RectX = 3;
+					 RectX = 2;
 				 }
 				 
 				 if(RectY == 1){
-					 RectY = 3;
-				 }else if(RectY == 5){
 					 RectY = 2;
-				 }else{
+				 }else if(RectY == 5){
 					 RectY = 1;
+				 }else{
+					 RectY = 0;
 				 }
 				 
 				 Dot temp = new Dot(RectX, RectY);							 
