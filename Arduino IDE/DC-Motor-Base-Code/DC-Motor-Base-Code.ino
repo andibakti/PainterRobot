@@ -3,11 +3,11 @@
 //Arduino code to control two brush DC motors with the Pololu DRV8835 Dual Motor Driver Kit for Raspberry Pi
 
 //------------declare variables--------------------------
-int DIR_1 = 1; //pin to control motor 1's direction (digital)
+int DIR_1 = 2; //pin to control motor 1's direction (digital)
 int PWM_1 = A1; //pin to control motor 1's speed (analog)
 
-int DIR_2 = 2; //pin to control motor 2's direction (digital)
-int PWM_2 = A2; //pin to control motor 2's speed (analog)
+int DIR_2 = 3; //pin to control motor 2's direction (digital)
+int PWM_2 = A0; //pin to control motor 2's speed (analog)
 
 //declare int as factor for converting degrees to duration of turn (in milliseconds)
 //factor will be determined through testing
