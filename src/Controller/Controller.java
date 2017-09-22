@@ -7,7 +7,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import com.fazecast.jSerialComm.SerialPort;
+
 
 import Model.Connection;
 import Model.Dot;
@@ -20,6 +23,8 @@ import Model.PainterRobot;
 public class Controller {
 	
 	private ArrayList<Dot> dots;
+	static SerialPort chosenPort;
+	private String port = "COM3";
 	
 
 	/**
@@ -38,12 +43,46 @@ public class Controller {
 		ArrayList<double[]> data;
 		try {
 			data = readFromFile();
-			for(int i=0; i<data.size(); i++){
-				for(int j = 0; j<2; j++){
-					System.out.print( data.get(i)[j]);
-					System.out.print(",");
+//			for(int i=0; i<data.size(); i++){
+//				for(int j = 0; j<2; j++){
+//					System.out.print( data.get(i)[j]);
+//					System.out.print(",");
+//				}
+//				System.out.println();
+//			}
+			String isConnected = "Connect";
+			ArrayList<String> portList = new ArrayList<String>();
+			SerialPort[] portNames = SerialPort.getCommPorts();
+			
+			
+			if(isConnected.equals("Connect")) {
+				// attempt to connect to the serial port
+				chosenPort = SerialPort.getCommPort(port);
+				chosenPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
+				if(chosenPort.openPort()) {
+					isConnected = "Disconnect";
+					portList.setEnabled(false);
+					
+					// create a new thread for sending data to the arduino
+					Thread thread = new Thread(){
+						@Override public void run() {
+							// wait after connecting, so the bootloader can finish
+							try {Thread.sleep(100); } catch(Exception e) {}
+
+							// enter an infinite loop that sends text to the arduino
+							PrintWriter output = new PrintWriter(chosenPort.getOutputStream());
+							while(true) {
+								output.print(new SimpleDateFormat("hh:mm:ss a     MMMMMMM dd, yyyy").format(new Date()));
+								output.flush();
+								try {Thread.sleep(100); } catch(Exception e) {}
+							}
+						}
+					};
+					thread.start();
 				}
-				System.out.println();
+			} else {
+				// disconnect from the serial port
+				chosenPort.closePort();
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

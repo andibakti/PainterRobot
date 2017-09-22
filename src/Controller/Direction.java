@@ -24,12 +24,7 @@ public class Direction {
      * @return rotation angle in degree
      */
     public double[] getDegree(ArrayList<double[]> allCrd,int n ){
-    	//Initialize variables
-    	double[] startPoint = {0,0};
     	
-        
-        //add the start point to the arraylist of coordinates
-        allCrd.add(0, startPoint);
         //create an array of current coordinate
         double[] curCrd;
         
