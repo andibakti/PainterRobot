@@ -8,7 +8,7 @@ Servo servo; //declare servo
 int rotate = 90; //change rotate to alter how much servo turns
 
 void setup() {
-  servo.attach(3); //which pin the servo's orange wire will go in
+  servo.attach(4); //which pin the servo's orange wire will go in
   servo.write(0); //servo is at 0 degrees
   delay(2000);
 
