@@ -21,7 +21,7 @@ public class Direction {
      * get the direction of robot's rotation in term of degrees
      * @param n the number of step now
      * @param allCrd the arraylist of all coordinates in the path
-     * @return rotation angle in degree
+     * @return rotation angle 	in degree
      */
     public double[] getDegree(ArrayList<double[]> allCrd,int n ){
     	
@@ -31,8 +31,10 @@ public class Direction {
         curCrd=allCrd.get(n);
        
         //create an array of next coordinate
-        double[] nxtCrd;
-        nxtCrd=allCrd.get(n+1);
+        double[] nxtCrd = new double[2];
+        if(allCrd.size() < n){
+        	nxtCrd=allCrd.get(n+1);
+        }
         
         //create an array of last coordinate
         double[] lstCrd;
@@ -150,7 +152,7 @@ public class Direction {
         
         //output a double array contaning 3 variables 
         //the angle, rotation direction and the distance the next step
-        double[] direction =new double[2];
+        double[] direction =new double[3];
         direction[0]=angle;
         direction[1]=rotDirect;
         direction[2]=a;
@@ -167,7 +169,7 @@ public class Direction {
      */
     public ArrayList<double[]> completeList(ArrayList<double[]> al){
         //set a starting point of coordinate (0,0)
-        double[] startPnt=new double[1];
+        double[] startPnt=new double[2];
         startPnt[0]=0;
         startPnt[1]=0;
         
@@ -175,14 +177,14 @@ public class Direction {
         al.add(0, startPnt);
         
         //set the end point of coordinate (3,0)
-        double[] endPnt=new double[1];
+        double[] endPnt=new double[2];
         endPnt[0]=3;
         endPnt[1]=0;
       
         al.add(endPnt);//add the end point to the array list
         
         //set a point (3,1) for resetting direction
-        double[] directionPnt=new double[1];
+        double[] directionPnt=new double[2];
         directionPnt[0]=3;
         directionPnt[1]=1;
         
@@ -225,7 +227,7 @@ public class Direction {
         
         double distance=Math.sqrt(Math.pow((abs(xn)),2)+Math.pow((abs(yn)),2));
         double rotDrt=1;
-        double[] firstDirection=new double[2];
+        double[] firstDirection=new double[3];
         firstDirection[0]=angle;
         firstDirection[1]=rotDrt;
         firstDirection[2]=distance;
