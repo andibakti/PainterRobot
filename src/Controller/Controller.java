@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import com.fazecast.jSerialComm.SerialPort;
 
@@ -28,20 +29,24 @@ public class Controller {
 	
 	private ArrayList<Dot> dots;
 	static SerialPort chosenPort;
-	private String port = "COM3";
+	private String port = "COM1";
 	private Direction direction = new Direction();
-	private final double DISTANCE_TO_TIME =  3;
+	private final double DISTANCE_TO_TIME =  3000;
+	private long WAIT_TIME = 100;
 	
 
 	/**
-	 * @return
+	 * @return the list of dots known by the Controller
 	 */
 	public ArrayList<Dot> getAllDots() {
 		return this.dots;
 	}
 	
-	//Send the coordinates of the dots to the back-end to translate
-	//data into rotations and movements that the robot has to perform.
+	/*Send the coordinates of the dots to the back-end to translate
+	 *data into rotations and movements that the robot has to perform.
+	 * @param dots
+	 * @return wasSet, true if the 
+	*/  
 	public boolean sendDots(ArrayList<Dot> dots){
 		boolean wasSet = false;
 		this.dots = dots;
@@ -56,18 +61,20 @@ public class Controller {
 			//Get path
 			path = readFromFile();
 			
-			data = new double[path.size()][2];
-			commands = new String[path.size()][2];
+			//initialization
+			data = new double[path.size()][3];
+			commands = new String[path.size()][3];
+			
+			//getting path in polar
 			data = processPath(path);
 			
+			//transforming them into string and as functions of time
 			for(int i = 0; i<data.length; i++){
-				for(int j = 0; j<2; j++){
+				for(int j = 0; j<3; j++){
 					//convert distance into times
 					if(j == 2){
 						commands[i][j] = String.valueOf(data[i][j] * DISTANCE_TO_TIME );
 					}else{
-						System.out.println("j:" + j + ", i :" + i);
-						System.out.println(data[i][j]);
 						commands[i][j] = String.valueOf(data[i][j]);
 					}
 					
@@ -79,26 +86,41 @@ public class Controller {
 				// attempt to connect to the serial port
 				chosenPort = SerialPort.getCommPort(port);
 				chosenPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
-				if(chosenPort.openPort()) {
+				TimeUnit.MILLISECONDS.sleep(WAIT_TIME);
+				chosenPort.openPort();
+				
+				if(chosenPort.isOpen()) {
 					state = "Disconnect";
-					// wait after connecting, so the bootloader can finish
-					try {Thread.sleep(100); } catch(Exception e) {}
+					TimeUnit.MILLISECONDS.sleep(WAIT_TIME);
+
 					PrintWriter output = new PrintWriter(chosenPort.getOutputStream());
 					
 					for(int j = 0; j<commands.length; j++){
-						for(int i = 0; i<2; i++){
-							if(i== 0 ){
+						for(int i = 0; i<3; i++){
+							
+							//adding separator to differentiate data
+							if(i == 0 ){
 								output.print(commands[j][i] + ",");
+								System.out.print(commands[j][i] + ",");
+								
 							}else if(i == 1){
 								output.print(commands[j][i] + ":");
+								System.out.print(commands[j][i] + ":");
+						
+							}else if(j == 2){
+								output.print(commands[j][i] + ";");
+								System.out.print(commands[j][i] + "-;");
 							}else{
 								output.print(commands[j][i] + ";");
+								System.out.print(commands[j][i] + ";");
 							}
 						
 						}
+						System.out.println("");
 					}
 					output.flush();
 				}
+				chosenPort.closePort();
 			} else {
 				// disconnect from the serial port
 				chosenPort.closePort();
@@ -131,7 +153,7 @@ public class Controller {
 		}
 		ArrayList<double[]> newPath = path;
 		
-		double[][] data = new double[newPath.size()][2];
+		double[][] data = new double[newPath.size()][3];
 		
 		data[0] = direction.firstStepDrt(newPath);
 		

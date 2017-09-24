@@ -157,6 +157,7 @@ public class Direction {
         direction[1]=rotDirect;
         direction[2]=a;
         
+        System.out.println("distance:" + a);
         
         return direction;
     }   
