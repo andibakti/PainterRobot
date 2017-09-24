@@ -1,9 +1,13 @@
 //Cheng Lin
 //19 Sept 17
 //Arduino code to control two brush DC motors with the Pololu DRV8835 Dual Motor Driver Kit for Raspberry Pi
+import processing.serial*;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 #include <Servo.h> //import servo commands
 Servo servo; //declare servo
+Serial myPort;
 
 //------------declare variables--------------------------
 int DIR_1 = 2; //pin to control motor 1's direction (digital)
@@ -18,6 +22,11 @@ int factor = 10;
 
 int rotate = 40; //change rotate to alter how much servo turns
 
+String data = ""; //input string
+char charIn;
+boolean stringComplete = false;
+int degree, rotation, duration;
+
 //------------setup-------------------------------
 void setup() {
   //set the direction pins as output
@@ -28,12 +37,27 @@ void setup() {
 
   servo.attach(4); //which pin the servo's orange wire will go in
   servo.write(40); //servo is at 0 degrees
+
+  //setup serial for interfacing with java
+  // initialize serial:
+  Serial.begin(9600);
+  // reserve 200 bytes for the inputString:
+  data.reserve(200);
 }
 
 //----------create methods to run motors-----------
-void motorDelay(){
-  
+void serialEvent () {
+  while (Serial.available()){
+  //get new byte
+  char charIn = (char)Serial.read();
+  if (charIn != ';') {
+    data += charIn;
+  } else {
+    stringComplete = true;
+  }
+  }
 }
+
 //we will construct the robot so
 //HIGH digital output is forward for M1
 //LOW digital output is forward for M2
@@ -120,10 +144,9 @@ void penUp() {
 
 //-----------loop----------------------------------
 void loop() {
-  //penDown();
-  //forward(1000);
-  //rightTurn(180);
-  //leftTurn(180);
-  //backward(1000);
-  //penUp();
+  if (stringComplete) {
+    Serial.println(data);
+    data = "";
+    stringComplete = false;
+  }
 }
