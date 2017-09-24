@@ -178,7 +178,7 @@ public class DrawPage extends JFrame{
 		
 		//if(visualizer.getSelectedDots() != null){ System.out.println(visualizer.getSelectedDots().get(0).getX());}
 		
-		  visualizer.setMatrix(cont.getAllDots());
+		  visualizer.setMatrix(new ArrayList<Dot>());
 		  
 		
 		pack();
