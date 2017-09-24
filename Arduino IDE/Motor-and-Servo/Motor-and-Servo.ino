@@ -2,7 +2,6 @@
 //19 Sept 17
 //Arduino code to control two brush DC motors with the Pololu DRV8835 Dual Motor Driver Kit for Raspberry Pi
 
-
 #include <Servo.h> //import servo commands
 Servo servo; //declare servo
 
@@ -15,14 +14,17 @@ int PWM_2 = A0; //pin to control motor 2's speed (analog)
 
 //declare int as factor for converting degrees to duration of turn (in milliseconds)
 //factor will be determined through testing
-int factor = 10;
+int factor = 80;
 
 int rotate = 40; //change rotate to alter how much servo turns
 
 String data = ""; //input string
 char charIn;
 boolean stringComplete = false;
-int degree, rotation, duration;
+double degree, rotation, duration;
+
+boolean begin = true;
+boolean end = false;
 
 //------------setup-------------------------------
 void setup() {
@@ -38,23 +40,23 @@ void setup() {
   //setup serial for interfacing with java
   // initialize serial:
   Serial.begin(9600);
+  Serial.println("Hello");
   // reserve 200 bytes for the inputString:
   data.reserve(200);
 }
 
 //----------create methods to run motors-----------
-/*void serialEvent () {
+void serialEvent () {
   while (Serial.available()){
-    //get new byte
-    char charIn = (char)Serial.read();
-    if (charIn != ';') {
-      data += charIn;
-      Serial.print(data);
-    } else {
-      stringComplete = true;
-    }
+  //get new byte
+  char charIn = (char)Serial.read();
+  if (charIn != ';') {
+    data += charIn;
+  } else {
+    stringComplete = true;
   }
-}*/
+  }
+}
 
 //we will construct the robot so
 //HIGH digital output is forward for M1
@@ -62,8 +64,8 @@ void setup() {
 
 //method to go forward, method accepts amount of time to travel forward
 void forward (int count){
-  digitalWrite(DIR_1, HIGH); //HIGH means M1 goes forward
-  digitalWrite(DIR_2, LOW); //LOW means M2 goes forward
+  digitalWrite(DIR_1, LOW); //LOW means M1 goes forward
+  digitalWrite(DIR_2, HIGH); //HIGH means M2 goes forward
 
   //delay because Arduino does not have enough current to start both at same time
   delay(100);
@@ -77,8 +79,8 @@ void forward (int count){
 //method to go backward, method accepts amount of time to travel backward
 void backward(int count) {
 
-  digitalWrite(DIR_1, LOW); //LOW means M1 goes backward
-  digitalWrite(DIR_2, HIGH); //HIGH means M2 goes backward
+  digitalWrite(DIR_1, HIGH); //HIGH means M1 goes backward
+  digitalWrite(DIR_2, LOW); //LOW means M2 goes backward
   
   //delay because Arduino does not have enough current to start both at same time
   delay(100);
@@ -141,21 +143,33 @@ void penUp() {
 }
 
 //-----------loop----------------------------------
-void loop()
-{
-  if(Serial.available() > 0){
-    
-    String data = "";
-    for(;Serial.available() > 0;) {
-      char j = Serial.read();
-      data = data + j;
-    }
-      Serial.print(data);
-      
-      //Serial.flush();
-    }
-    
-    //Serial.flush();
+void loop() {
+
+  if (begin) {
+    penDown();
+  }
+  
+  if (stringComplete) {
+    Serial.println(data);
+    degree = String.valueOf(data.substring(0, data.indexOf(',')));
+    rotation = Integer.parseInt(data.substring(data.indexOf(',')+1, data.indexOf(':'));
+    duration = Integer.parseInt(data.substring(data.indexOf(':')+1, data.length()-1));
+
+    Serial.println("Travel: " + degree " degrees for " + duration + " seconds");
+
+    /*if (rotation == 0) { //if we are not turning
+      forward(duration);
+    } else {
+      rightTurn(degree);
+    }*/
+
+    //reset variables
+    data = "";
+    stringComplete = false;
   }
 
+  if (end) {
+    penUp();
+  }
 
+}
