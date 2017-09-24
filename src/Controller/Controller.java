@@ -3,20 +3,24 @@
 package Controller;
 
 import java.io.BufferedReader;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import com.fazecast.jSerialComm.SerialPort;
 
 
 import Model.Connection;
 import Model.Dot;
 import Model.PainterRobot;
+import Controller.Direction;
 
-/**
+/**	
  * Author: Bakti, Andi-Camille
  * Email: andi-camille.bakti@mail.mcgill.ca
  */
@@ -25,6 +29,8 @@ public class Controller {
 	private ArrayList<Dot> dots;
 	static SerialPort chosenPort;
 	private String port = "COM3";
+	private Direction direction = new Direction();
+	private final double DISTANCE_TO_TIME =  3;
 	
 
 	/**
@@ -40,58 +46,100 @@ public class Controller {
 		boolean wasSet = false;
 		this.dots = dots;
 		
-		ArrayList<double[]> data;
+		
+		
+		ArrayList<double[]> path;
+		double[][] data;
+		String[][] commands;
+		
 		try {
-			data = readFromFile();
-//			for(int i=0; i<data.size(); i++){
-//				for(int j = 0; j<2; j++){
-//					System.out.print( data.get(i)[j]);
-//					System.out.print(",");
-//				}
-//				System.out.println();
-//			}
-			String isConnected = "Connect";
-			ArrayList<String> portList = new ArrayList<String>();
-			SerialPort[] portNames = SerialPort.getCommPorts();
+			//Get path
+			path = readFromFile();
 			
+			data = new double[path.size()][2];
+			commands = new String[path.size()][2];
+			data = processPath(path);
 			
-			if(isConnected.equals("Connect")) {
+			for(int i = 0; i<data.length; i++){
+				for(int j = 0; j<2; j++){
+					//convert distance into times
+					if(j == 2){
+						commands[i][j] = String.valueOf(data[i][j] * DISTANCE_TO_TIME );
+					}else{
+						System.out.println("j:" + j + ", i :" + i);
+						System.out.println(data[i][j]);
+						commands[i][j] = String.valueOf(data[i][j]);
+					}
+					
+				}
+			}
+		
+			String state = "Connect";		
+			if(state.equals("Connect")) {
 				// attempt to connect to the serial port
 				chosenPort = SerialPort.getCommPort(port);
 				chosenPort.setComPortTimeouts(SerialPort.TIMEOUT_SCANNER, 0, 0);
 				if(chosenPort.openPort()) {
-					isConnected = "Disconnect";
-					portList.setEnabled(false);
+					state = "Disconnect";
+					// wait after connecting, so the bootloader can finish
+					try {Thread.sleep(100); } catch(Exception e) {}
+					PrintWriter output = new PrintWriter(chosenPort.getOutputStream());
 					
-					// create a new thread for sending data to the arduino
-					Thread thread = new Thread(){
-						@Override public void run() {
-							// wait after connecting, so the bootloader can finish
-							try {Thread.sleep(100); } catch(Exception e) {}
-
-							// enter an infinite loop that sends text to the arduino
-							PrintWriter output = new PrintWriter(chosenPort.getOutputStream());
-							while(true) {
-								output.print(new SimpleDateFormat("hh:mm:ss a     MMMMMMM dd, yyyy").format(new Date()));
-								output.flush();
-								try {Thread.sleep(100); } catch(Exception e) {}
+					for(int j = 0; j<commands.length; j++){
+						for(int i = 0; i<2; i++){
+							if(i== 0 ){
+								output.print(commands[j][i] + ",");
+							}else if(i == 1){
+								output.print(commands[j][i] + ":");
+							}else{
+								output.print(commands[j][i] + ";");
 							}
+						
 						}
-					};
-					thread.start();
+					}
+					output.flush();
 				}
 			} else {
 				// disconnect from the serial port
 				chosenPort.closePort();
 			}
+			
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//Send to back-end
 		
 		wasSet = true;
 		return wasSet;
+	}
+	
+	//This function processes the path into distance and degree needed
+	public double[][] processPath(ArrayList<double[]> path){
+		//Initialization
+		
+		path = direction.completeList(path);
+		System.out.println("pathsize" + path.size());
+		path.remove(path.size()-1);
+		path.remove(path.size()-1);
+		path.remove(path.size()-1);
+		for(int i = 0 ; i<path.size(); i++){
+			for(int j = 0 ; j<2; j++){
+				System.out.print(path.get(i)[j]);
+			}
+			System.out.println("");
+		}
+		ArrayList<double[]> newPath = path;
+		
+		double[][] data = new double[newPath.size()][2];
+		
+		data[0] = direction.firstStepDrt(newPath);
+		
+		for(int i = 1; i<newPath.size(); i++){
+			data[i] = direction.getDegree(newPath, i);
+		}
+		
+		return data;		
 	}
 
 	//Read the "Dots.txt" file, puts the information in an array

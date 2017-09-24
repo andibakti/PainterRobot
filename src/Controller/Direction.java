@@ -29,10 +29,10 @@ public class Direction {
         double[] curCrd;
         
         curCrd=allCrd.get(n);
-       
         //create an array of next coordinate
         double[] nxtCrd = new double[2];
         if(allCrd.size() < n){
+        	
         	nxtCrd=allCrd.get(n+1);
         }
         

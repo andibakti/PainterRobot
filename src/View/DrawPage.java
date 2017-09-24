@@ -161,7 +161,7 @@ public class DrawPage extends JFrame{
 		this.dots = visualizer.chosenDots;
 		Controller cont = new Controller();
 		cont.sendDots(dots);
-		
+		refreshData();
 		 
 	}
 
