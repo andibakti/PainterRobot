@@ -14,7 +14,7 @@ int PWM_2 = A0; //pin to control motor 2's speed (analog)
 
 //declare int as factor for converting degrees to duration of turn (in milliseconds)
 //factor will be determined through testing
-int factor = 80;
+int factor = 60;
 
 int rotate = 40; //change rotate to alter how much servo turns
 
@@ -63,7 +63,7 @@ void serialEvent () {
 //LOW digital output is forward for M2
 
 //method to go forward, method accepts amount of time to travel forward
-void forward (int count){
+void forward (double count){
   digitalWrite(DIR_1, LOW); //LOW means M1 goes forward
   digitalWrite(DIR_2, HIGH); //HIGH means M2 goes forward
 
@@ -77,7 +77,7 @@ void forward (int count){
   motorStop();
 }
 //method to go backward, method accepts amount of time to travel backward
-void backward(int count) {
+void backward(double count) {
 
   digitalWrite(DIR_1, HIGH); //HIGH means M1 goes backward
   digitalWrite(DIR_2, LOW); //LOW means M2 goes backward
@@ -93,7 +93,7 @@ void backward(int count) {
 }
 
 //method to turn right, accepts a degree value for the magnitude of the turn
-void rightTurn(int deg) {
+void rightTurn(double deg) {
   //left turns require M2 to go forward while M1 backward
   digitalWrite(DIR_1, LOW); //HIGH means M1 goes backward
   digitalWrite(DIR_2, LOW); //HIGH means M2 goes forward
@@ -108,7 +108,7 @@ void rightTurn(int deg) {
 }
 
 //method to turn left, accepts a degree value for the magnitude of the turn
-void leftTurn(int deg) {
+void leftTurn(double deg) {
   //left turns require M2 to go forward while M1 backward
   digitalWrite(DIR_1, LOW); //HIGH means M1 goes backward
   digitalWrite(DIR_2, LOW); //HIGH means M2 goes forward
@@ -151,21 +151,26 @@ void loop() {
   
   if (stringComplete) {
     Serial.println(data);
-    degree = String.valueOf(data.substring(0, data.indexOf(',')));
-    rotation = Integer.parseInt(data.substring(data.indexOf(',')+1, data.indexOf(':'));
-    duration = Integer.parseInt(data.substring(data.indexOf(':')+1, data.length()-1));
+    degree = (data.substring(0, data.indexOf(','))).toFloat();
+    rotation = (data.substring(data.indexOf(',')+1, data.indexOf(':'))).toFloat();
+    duration = (data.substring(data.indexOf(':')+1, data.length())).toFloat();
 
-    Serial.println("Travel: " + degree " degrees for " + duration + " seconds");
+    Serial.print("Travel ");
+    Serial.print(degree);
+    Serial.print(" degrees for ");
+    Serial.print(duration);
+    Serial.print(" seconds");
 
-    /*if (rotation == 0) { //if we are not turning
+    if (rotation == 0) { //if we are not turning
       forward(duration);
     } else {
       rightTurn(degree);
-    }*/
+    }
 
     //reset variables
     data = "";
     stringComplete = false;
+    delay(1000);
   }
 
   if (end) {
